@@ -6,7 +6,10 @@ export const metadata: Metadata = {
   description:
     'Apple-style AI multi-model translation workspace. Browser-first, local-first. Your content never leaves your browser.',
   icons: {
-    icon: '/favicon.svg',
+    icon: [
+      { url: '/brand/logo.png', type: 'image/png' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
   },
 };
 
