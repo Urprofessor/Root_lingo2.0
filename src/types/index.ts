@@ -75,7 +75,7 @@ export interface TranslationSettings {
 
   // 术语库 & prompt 模板
   glossaryId: string;       // 'momcozy' | 'none' | custom-id
-  templateId: string;       // 'default' | custom-id
+  templateIds: string[];    // 多选,可空数组
 
   // 自定义需求
   customRequirement: string;

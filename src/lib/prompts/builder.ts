@@ -2,6 +2,7 @@ import { BASE_TRANSLATION_PROMPT } from './system';
 import { SAFETY_PROMPT } from './safety';
 import { buildStylePrompt } from './style';
 import { buildGlossaryPrompt } from './glossary';
+import { combinePromptContents } from './loader';
 import { matchGlossaryTerms } from '@/lib/glossary/injector';
 import type { Glossary, TranslationSettings } from '@/types';
 import { getLanguageEnLabel } from '@/lib/utils/languages';
@@ -34,6 +35,14 @@ export function buildSystemPrompt(opts: {
     const matched = matchGlossaryTerms(sourceText, glossary);
     const glossaryPrompt = buildGlossaryPrompt(matched, targetLang);
     if (glossaryPrompt) parts.push(glossaryPrompt);
+  }
+
+  // 提示词模板(多选,Quick 模式不启用模板)
+  if (settings.mode !== 'quick' && settings.templateIds && settings.templateIds.length > 0) {
+    const tplPrompt = combinePromptContents(settings.templateIds);
+    if (tplPrompt) {
+      parts.push('额外的写作 / 翻译指令(用户从模板库选择):\n\n' + tplPrompt);
+    }
   }
 
   // 安全边界

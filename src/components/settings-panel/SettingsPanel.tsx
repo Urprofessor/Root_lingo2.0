@@ -8,6 +8,7 @@ import { ModelPicker } from './ModelPicker';
 import { LanguageMultiSelect } from './LanguageMultiSelect';
 import { SourceLanguagePicker } from './SourceLanguagePicker';
 import { StyleSlider } from './StyleSliders';
+import { PromptTemplateMultiSelect } from './PromptTemplateMultiSelect';
 import { useTranslationStore } from '@/store/useTranslationStore';
 import { cn } from '@/lib/utils/cn';
 
@@ -23,7 +24,8 @@ export function SettingsPanel() {
   const setProfessional = useTranslationStore((s) => s.setProfessional);
   const setWarmth = useTranslationStore((s) => s.setWarmth);
   const setGlossaryId = useTranslationStore((s) => s.setGlossaryId);
-  const setTemplateId = useTranslationStore((s) => s.setTemplateId);
+  const setTemplateIds = useTranslationStore((s) => s.setTemplateIds);
+  const toggleTemplateId = useTranslationStore((s) => s.toggleTemplateId);
   const setCustomRequirement = useTranslationStore((s) => s.setCustomRequirement);
   const setStyleEnabled = useTranslationStore((s) => s.setStyleEnabled);
   const setSafetyEnabled = useTranslationStore((s) => s.setSafetyEnabled);
@@ -128,13 +130,12 @@ export function SettingsPanel() {
           ]}
         />
         {showTemplateSection && (
-          <SimpleSelect
-            label="提示词模板"
-            value={settings.templateId}
-            onChange={setTemplateId}
-            options={[
-              { id: 'default', label: '默认模板', description: '通用翻译,保留原文格式' },
-            ]}
+          <PromptTemplateMultiSelect
+            selected={settings.templateIds}
+            onToggle={toggleTemplateId}
+            onChange={setTemplateIds}
+            targetLangs={settings.targetLanguages}
+            sourceLang={settings.sourceLanguage}
           />
         )}
       </div>

@@ -32,7 +32,8 @@ interface TranslationStore {
   setProfessional: (v: number) => void;
   setWarmth: (v: number) => void;
   setGlossaryId: (id: string) => void;
-  setTemplateId: (id: string) => void;
+  setTemplateIds: (ids: string[]) => void;
+  toggleTemplateId: (id: string) => void;
   setCustomRequirement: (text: string) => void;
   setStyleEnabled: (enabled: boolean) => void;
   setSafetyEnabled: (enabled: boolean) => void;
@@ -70,7 +71,7 @@ const DEFAULT_SETTINGS: TranslationSettings = {
   professional: 60,
   warmth: 40,
   glossaryId: 'momcozy',
-  templateId: 'default',
+  templateIds: [],
   customRequirement: '',
   styleEnabled: false,
   safetyEnabled: true,
@@ -114,8 +115,16 @@ export const useTranslationStore = create<TranslationStore>((set) => ({
     set((state) => ({ settings: { ...state.settings, warmth } })),
   setGlossaryId: (glossaryId) =>
     set((state) => ({ settings: { ...state.settings, glossaryId } })),
-  setTemplateId: (templateId) =>
-    set((state) => ({ settings: { ...state.settings, templateId } })),
+  setTemplateIds: (templateIds) =>
+    set((state) => ({ settings: { ...state.settings, templateIds } })),
+  toggleTemplateId: (id) =>
+    set((state) => {
+      const current = state.settings.templateIds;
+      const next = current.includes(id)
+        ? current.filter((x) => x !== id)
+        : [...current, id];
+      return { settings: { ...state.settings, templateIds: next } };
+    }),
   setCustomRequirement: (customRequirement) =>
     set((state) => ({ settings: { ...state.settings, customRequirement } })),
   setStyleEnabled: (styleEnabled) =>

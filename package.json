@@ -4,7 +4,9 @@
   "private": true,
   "description": "ROOT LINGO — Apple-style AI Multi-Model Translation Studio. Browser-first, Local-first.",
   "scripts": {
-    "dev": "next dev",
+    "dev": "npm run build:prompts && next dev",
+    "build:prompts": "node scripts/build-prompts.js",
+    "prebuild": "npm run build:prompts",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
