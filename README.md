@@ -115,11 +115,11 @@ Vercel 自动重新部署
 
 注意:
 
-id 必填,且唯一
+```id 必填,且唯一
 name 必填,显示用
 其他字段都可选
 targetLangs 不填 = 所有语言都显示
 category: writing 或 tags: [非翻译] 会触发橙色"非翻译"标签
-
+```
 
 Internal use only.
