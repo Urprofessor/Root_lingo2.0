@@ -99,7 +99,7 @@ src/
 在你本地仓库的 src/data/prompts/ 文件夹下新建一个 .md 文件,比如 my-new-template.md
 文件头部写 YAML frontmatter:
 
-markdown   ---
+```markdown   ---
    id: my-new-template
    name: 我的新模板
    description: 简短描述
@@ -108,6 +108,7 @@ markdown   ---
    ---
    
    You are a... (实际 prompt 内容)
+```
 
 git add . && git commit && git push
 Vercel 自动重新部署
