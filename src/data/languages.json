@@ -1,0 +1,20 @@
+{
+  "languages": [
+    { "id": "zh-CN", "label": "中文(简体)",   "labelEn": "Chinese (Simplified)",  "flag": "🇨🇳", "rtl": false, "popular": true },
+    { "id": "zh-TW", "label": "中文(繁体)",   "labelEn": "Chinese (Traditional)", "flag": "🇹🇼", "rtl": false, "popular": true },
+    { "id": "en",    "label": "English",        "labelEn": "English",               "flag": "🇺🇸", "rtl": false, "popular": true },
+    { "id": "de",    "label": "Deutsch",        "labelEn": "German",                "flag": "🇩🇪", "rtl": false, "popular": true },
+    { "id": "fr",    "label": "Français",       "labelEn": "French",                "flag": "🇫🇷", "rtl": false, "popular": true },
+    { "id": "it",    "label": "Italiano",       "labelEn": "Italian",               "flag": "🇮🇹", "rtl": false, "popular": true },
+    { "id": "es",    "label": "Español",        "labelEn": "Spanish",               "flag": "🇪🇸", "rtl": false, "popular": true },
+    { "id": "pt",    "label": "Português",      "labelEn": "Portuguese",            "flag": "🇵🇹", "rtl": false, "popular": true },
+    { "id": "ru",    "label": "Русский",        "labelEn": "Russian",               "flag": "🇷🇺", "rtl": false, "popular": true },
+    { "id": "ja",    "label": "日本語",          "labelEn": "Japanese",              "flag": "🇯🇵", "rtl": false, "popular": true },
+    { "id": "ar",    "label": "العربية",        "labelEn": "Arabic",                "flag": "🇸🇦", "rtl": true,  "popular": true },
+    { "id": "id",    "label": "Bahasa Indonesia", "labelEn": "Indonesian",          "flag": "🇮🇩", "rtl": false, "popular": true },
+    { "id": "ms",    "label": "Bahasa Melayu",  "labelEn": "Malay",                 "flag": "🇲🇾", "rtl": false, "popular": true },
+    { "id": "vi",    "label": "Tiếng Việt",     "labelEn": "Vietnamese",            "flag": "🇻🇳", "rtl": false, "popular": true },
+    { "id": "th",    "label": "ภาษาไทย",         "labelEn": "Thai",                  "flag": "🇹🇭", "rtl": false, "popular": true },
+    { "id": "tl",    "label": "Filipino",       "labelEn": "Filipino (Tagalog)",    "flag": "🇵🇭", "rtl": false, "popular": true }
+  ]
+}

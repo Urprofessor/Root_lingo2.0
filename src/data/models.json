@@ -1,0 +1,64 @@
+{
+  "providers": [
+    {
+      "id": "openai",
+      "label": "OpenAI",
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "keyFormat": "sk-...",
+      "docsUrl": "https://platform.openai.com/api-keys",
+      "models": [
+        { "id": "gpt-5.5",         "label": "GPT-5.5",         "contextWindow": 400000 },
+        { "id": "gpt-5.4-mini",    "label": "GPT-5.4-mini",    "contextWindow": 200000 },
+        { "id": "gpt-5.3-instant", "label": "GPT-5.3 Instant", "contextWindow": 128000 },
+        { "id": "o3",              "label": "o3",              "contextWindow": 200000, "reasoning": true },
+        { "id": "o4-mini",         "label": "o4-mini",         "contextWindow": 128000, "reasoning": true }
+      ]
+    },
+    {
+      "id": "anthropic",
+      "label": "Anthropic",
+      "endpoint": "https://api.anthropic.com/v1/messages",
+      "keyFormat": "sk-ant-...",
+      "docsUrl": "https://console.anthropic.com/settings/keys",
+      "models": [
+        { "id": "claude-opus-4-6",   "label": "Claude Opus 4.6",   "contextWindow": 200000 },
+        { "id": "claude-sonnet-4-6", "label": "Claude Sonnet 4.6", "contextWindow": 200000 },
+        { "id": "claude-haiku-4-5",  "label": "Claude Haiku 4.5",  "contextWindow": 200000 }
+      ]
+    },
+    {
+      "id": "google",
+      "label": "Google",
+      "endpoint": "https://generativelanguage.googleapis.com/v1beta",
+      "keyFormat": "AIza...",
+      "docsUrl": "https://aistudio.google.com/app/apikey",
+      "models": [
+        { "id": "gemini-2.5-pro",   "label": "Gemini 2.5 Pro",   "contextWindow": 1000000 },
+        { "id": "gemini-2.5-flash", "label": "Gemini 2.5 Flash", "contextWindow": 1000000 }
+      ]
+    },
+    {
+      "id": "deepseek",
+      "label": "DeepSeek",
+      "endpoint": "https://api.deepseek.com/chat/completions",
+      "keyFormat": "sk-...",
+      "docsUrl": "https://platform.deepseek.com/api_keys",
+      "models": [
+        { "id": "deepseek-v4-pro",   "label": "DeepSeek V4 Pro",   "contextWindow": 128000 },
+        { "id": "deepseek-v4-flash", "label": "DeepSeek V4 Flash", "contextWindow": 128000 }
+      ]
+    },
+    {
+      "id": "qwen",
+      "label": "Qwen",
+      "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+      "keyFormat": "sk-...",
+      "docsUrl": "https://bailian.console.aliyun.com/?apiKey=1",
+      "models": [
+        { "id": "qwen-max",   "label": "Qwen-Max",   "contextWindow": 128000 },
+        { "id": "qwen-plus",  "label": "Qwen-Plus",  "contextWindow": 128000 },
+        { "id": "qwen-turbo", "label": "Qwen-Turbo", "contextWindow": 128000 }
+      ]
+    }
+  ]
+}
