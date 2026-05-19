@@ -13,34 +13,35 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@vercel/analytics": "^2.0.1",
+    "clsx": "^2.1.1",
+    "docx": "^8.5.0",
+    "file-saver": "^2.0.5",
+    "jose": "^5.6.3",
+    "jspdf": "^2.5.1",
+    "jszip": "^3.10.1",
+    "localforage": "^1.10.0",
+    "lucide-react": "^0.383.0",
+    "mammoth": "^1.8.0",
     "next": "14.2.5",
+    "pdfjs-dist": "^4.4.168",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "lucide-react": "^0.383.0",
-    "zustand": "^4.5.4",
-    "clsx": "^2.1.1",
     "tailwind-merge": "^2.4.0",
-    "mammoth": "^1.8.0",
-    "pdfjs-dist": "^4.4.168",
-    "xlsx": "^0.18.5",
-    "jszip": "^3.10.1",
     "tesseract.js": "^5.1.0",
-    "docx": "^8.5.0",
-    "jspdf": "^2.5.1",
-    "localforage": "^1.10.0",
-    "file-saver": "^2.0.5",
-    "jose": "^5.6.3"
+    "xlsx": "^0.18.5",
+    "zustand": "^4.5.4"
   },
   "devDependencies": {
+    "@types/file-saver": "^2.0.7",
     "@types/node": "^20.14.10",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "@types/file-saver": "^2.0.7",
-    "typescript": "^5.5.3",
-    "tailwindcss": "^3.4.6",
-    "postcss": "^8.4.39",
     "autoprefixer": "^10.4.19",
     "eslint": "^8.57.0",
-    "eslint-config-next": "14.2.5"
+    "eslint-config-next": "14.2.5",
+    "postcss": "^8.4.39",
+    "tailwindcss": "^3.4.6",
+    "typescript": "^5.5.3"
   }
 }
