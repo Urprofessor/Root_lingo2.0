@@ -110,9 +110,6 @@ src/
    You are a... (实际 prompt 内容)
 ```
 
-git add . && git commit && git push
-Vercel 自动重新部署
-网站上模板就出现了
 
 注意:
 
