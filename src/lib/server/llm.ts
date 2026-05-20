@@ -21,6 +21,9 @@ export interface ServerChatRequest {
  */
 export async function callLLMStream(req: ServerChatRequest): Promise<Response> {
   switch (req.route.via) {
+    case 'compatible':
+      // 部门统一网关 — OpenAI 兼容协议
+      return callOpenAICompat(req, 'https://cliproxy.luteos.site/v1/chat/completions');
     case 'anthropic':
       return callAnthropic(req);
     case 'deepseek':

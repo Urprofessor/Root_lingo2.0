@@ -43,12 +43,12 @@ export const FLAT_MODELS: FlatModel[] = ALL_PROVIDERS.flatMap((p) =>
 // 默认模型(用于初始化)
 export const DEFAULT_MODEL: ModelRef = {
   providerId: 'anthropic',
-  modelId: 'claude-sonnet-4-6',
+  modelId: 'claude-sonnet-4.6',
 };
 
 export const DEFAULT_JUDGE_MODEL: ModelRef = {
   providerId: 'anthropic',
-  modelId: 'claude-opus-4-6',
+  modelId: 'claude-opus-4.6',
 };
 
 export const DEFAULT_SECONDARY_MODEL: ModelRef = {
