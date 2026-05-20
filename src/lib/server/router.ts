@@ -9,7 +9,7 @@
  *
  * 每个模型按数组顺序探测哪条可用(对应环境变量 KEY 存在)
  */
-export type ProviderId = 'compatible' | 'anthropic' | 'deepseek' | 'openrouter';
+import type { ProviderId } from '@/types';
 
 export interface ModelRoute {
   via: ProviderId;

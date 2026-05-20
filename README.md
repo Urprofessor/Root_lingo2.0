@@ -94,30 +94,4 @@ src/
 
 ## License
 
-加新模板的工作流(以后你想加 prompt 时)
-
-在你本地仓库的 src/data/prompts/ 文件夹下新建一个 .md 文件,比如 my-new-template.md
-文件头部写 YAML frontmatter:
-
-```markdown   ---
-   id: my-new-template
-   name: 我的新模板
-   description: 简短描述
-   category: medical
-   targetLangs: [en, ja]
-   ---
-   
-   You are a... (实际 prompt 内容)
-```
-
-
-注意:
-
-```id 必填,且唯一
-name 必填,显示用
-其他字段都可选
-targetLangs 不填 = 所有语言都显示
-category: writing 或 tags: [非翻译] 会触发橙色"非翻译"标签
-```
-
 Internal use only.
