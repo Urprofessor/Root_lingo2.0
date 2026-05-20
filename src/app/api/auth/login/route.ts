@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { verifyCredentials } from '@/lib/server/parse-passwords';
 import { signSession } from '@/lib/server/auth';
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 export async function POST(request: Request) {
   let body: { username?: string; password?: string };

@@ -12,7 +12,7 @@ import { pickRoute } from '@/lib/server/router';
 import { callLLMStream } from '@/lib/server/llm';
 import type { ChatMessage } from '@/types';
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 export const maxDuration = 300; // 5 分钟,够长翻译用
 
 interface TranslateRequestBody {
