@@ -13,7 +13,7 @@ export interface Language {
 }
 
 // --- 模型 ---
-export type ProviderId = 'openai' | 'anthropic' | 'google' | 'deepseek' | 'qwen';
+export type ProviderId = 'openai' | 'anthropic' | 'google' | 'deepseek' | 'qwen' | 'compatible' | 'openrouter';
 
 export interface Model {
   id: string;

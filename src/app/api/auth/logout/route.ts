@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 /**
  * 登出是客户端动作(删本地 token),服务端不持有 session 状态,

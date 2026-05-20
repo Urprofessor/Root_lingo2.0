@@ -1,13 +1,15 @@
 /**
  * 模型路由表
  *
- * 每个模型可以有 1-2 条路由,按数组顺序尝试:
- *   - 第一条优先(通常是官方直连)
- *   - 第二条兜底(通常是 OpenRouter)
+ * 策略:OpenRouter 优先(Vercel 美国服务器公网可达)。
  *
- * 后端会按这个顺序探测哪条可用(对应的环境变量 KEY 存在)
+ * 说明:部门网关 cliproxy.luteos.site 有地域/网络访问限制,
+ * Vercel 美国服务器无法连接(超时),因此不再作为主路由。
+ * 全部模型通过 OpenRouter 统一调用,一个 Key 覆盖所有厂商。
+ *
+ * 如果将来在能访问网关的环境部署,可把 compatible 路由加回数组首位。
  */
-export type ProviderId = 'anthropic' | 'deepseek' | 'openrouter';
+import type { ProviderId } from '@/types';
 
 export interface ModelRoute {
   via: ProviderId;
@@ -15,48 +17,48 @@ export interface ModelRoute {
 }
 
 /**
- * 用户在 UI 看到的 model id  →  实际可用的路由列表
+ * 用户在 UI 看到的 model id  →  实际可用的路由列表(按优先级)
+ *
+ * OpenRouter 的 model slug 命名规则:厂商/模型名
  */
 export const MODEL_ROUTES: Record<string, ModelRoute[]> = {
-  // ========== OpenAI 系列 — 全走 OpenRouter ==========
-  'gpt-5.5':         [{ via: 'openrouter', modelId: 'openai/gpt-5.5' }],
-  'gpt-5.4-mini':    [{ via: 'openrouter', modelId: 'openai/gpt-5.4-mini' }],
-  'gpt-5.3-instant': [{ via: 'openrouter', modelId: 'openai/gpt-5.3-instant' }],
-  'o3':              [{ via: 'openrouter', modelId: 'openai/o3' }],
-  'o4-mini':         [{ via: 'openrouter', modelId: 'openai/o4-mini' }],
-
-  // ========== Anthropic 系列 — 优先官方,兜底 OpenRouter ==========
-  'claude-opus-4-6':   [
-    { via: 'anthropic',  modelId: 'claude-opus-4-6' },
+  // ========== Anthropic Claude — OpenRouter 优先,官方兜底 ==========
+  'claude-opus-4.7': [
+    { via: 'openrouter', modelId: 'anthropic/claude-opus-4.7' },
+    { via: 'anthropic',  modelId: 'claude-opus-4-7' },
+  ],
+  'claude-opus-4.6': [
     { via: 'openrouter', modelId: 'anthropic/claude-opus-4.6' },
+    { via: 'anthropic',  modelId: 'claude-opus-4-6' },
   ],
-  'claude-sonnet-4-6': [
-    { via: 'anthropic',  modelId: 'claude-sonnet-4-6' },
+  'claude-sonnet-4.6': [
     { via: 'openrouter', modelId: 'anthropic/claude-sonnet-4.6' },
+    { via: 'anthropic',  modelId: 'claude-sonnet-4-6' },
   ],
-  'claude-haiku-4-5':  [
-    { via: 'anthropic',  modelId: 'claude-haiku-4-5' },
+  'claude-haiku-4.5': [
     { via: 'openrouter', modelId: 'anthropic/claude-haiku-4.5' },
+    { via: 'anthropic',  modelId: 'claude-haiku-4-5' },
   ],
 
-  // ========== Google 系列 — 全走 OpenRouter ==========
-  'gemini-2.5-pro':   [{ via: 'openrouter', modelId: 'google/gemini-2.5-pro' }],
-  'gemini-2.5-flash': [{ via: 'openrouter', modelId: 'google/gemini-2.5-flash' }],
+  // ========== OpenAI GPT — OpenRouter ==========
+  'gpt-5.5':      [{ via: 'openrouter', modelId: 'openai/gpt-5.5' }],
+  'gpt-5.4':      [{ via: 'openrouter', modelId: 'openai/gpt-5.4' }],
+  'gpt-5.4-mini': [{ via: 'openrouter', modelId: 'openai/gpt-5.4-mini' }],
+  'gpt-5-nano':   [{ via: 'openrouter', modelId: 'openai/gpt-5-nano' }],
 
-  // ========== DeepSeek — 优先官方,兜底 OpenRouter ==========
-  'deepseek-v4-pro':   [
-    { via: 'deepseek',   modelId: 'deepseek-v4-pro' },
+  // ========== Google Gemini — OpenRouter ==========
+  'gemini-3.1-pro-preview': [{ via: 'openrouter', modelId: 'google/gemini-3.1-pro-preview' }],
+  'gemini-3-flash-preview': [{ via: 'openrouter', modelId: 'google/gemini-3-flash-preview' }],
+
+  // ========== DeepSeek — OpenRouter 优先,官方兜底 ==========
+  'deepseek-v4-pro': [
     { via: 'openrouter', modelId: 'deepseek/deepseek-v4-pro' },
+    { via: 'deepseek',   modelId: 'deepseek-v4-pro' },
   ],
   'deepseek-v4-flash': [
-    { via: 'deepseek',   modelId: 'deepseek-v4-flash' },
     { via: 'openrouter', modelId: 'deepseek/deepseek-v4-flash' },
+    { via: 'deepseek',   modelId: 'deepseek-v4-flash' },
   ],
-
-  // ========== Qwen 系列 — 全走 OpenRouter ==========
-  'qwen-max':   [{ via: 'openrouter', modelId: 'qwen/qwen-max' }],
-  'qwen-plus':  [{ via: 'openrouter', modelId: 'qwen/qwen-plus' }],
-  'qwen-turbo': [{ via: 'openrouter', modelId: 'qwen/qwen-turbo' }],
 };
 
 /**
@@ -75,12 +77,14 @@ export function pickRoute(modelId: string): { route: ModelRoute; apiKey: string 
 
 function getApiKeyForProvider(via: ProviderId): string {
   switch (via) {
+    case 'openrouter':
+      return process.env.OPENROUTER_API_KEY || '';
     case 'anthropic':
       return process.env.ANTHROPIC_API_KEY || '';
     case 'deepseek':
       return process.env.DEEPSEEK_API_KEY || '';
-    case 'openrouter':
-      return process.env.OPENROUTER_API_KEY || '';
+    case 'compatible':
+      return process.env.COMPATIBLE_API_KEY || '';
     default:
       return '';
   }

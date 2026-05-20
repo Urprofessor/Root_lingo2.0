@@ -21,12 +21,20 @@ export interface ServerChatRequest {
  */
 export async function callLLMStream(req: ServerChatRequest): Promise<Response> {
   switch (req.route.via) {
+    case 'compatible':
+      // 部门统一网关 — OpenAI 兼容协议,非流式(网关可能不支持 stream)
+      return callOpenAICompat(req, 'https://cliproxy.luteos.site/v1/chat/completions', {
+        stream: false,
+      });
     case 'anthropic':
       return callAnthropic(req);
     case 'deepseek':
-      return callOpenAICompat(req, 'https://api.deepseek.com/chat/completions');
+      return callOpenAICompat(req, 'https://api.deepseek.com/chat/completions', { stream: true });
     case 'openrouter':
-      return callOpenAICompat(req, 'https://openrouter.ai/api/v1/chat/completions', true);
+      return callOpenAICompat(req, 'https://openrouter.ai/api/v1/chat/completions', {
+        stream: true,
+        isOpenRouter: true,
+      });
     default:
       throw new Error(`Unsupported provider: ${req.route.via}`);
   }
@@ -87,12 +95,14 @@ async function callAnthropic(req: ServerChatRequest): Promise<Response> {
 async function callOpenAICompat(
   req: ServerChatRequest,
   endpoint: string,
-  isOpenRouter = false
+  opts: { stream: boolean; isOpenRouter?: boolean }
 ): Promise<Response> {
+  const { stream, isOpenRouter = false } = opts;
+
   const body: Record<string, unknown> = {
     model: req.route.modelId,
     messages: req.messages,
-    stream: true,
+    stream,
   };
   if (typeof req.temperature === 'number') body.temperature = req.temperature;
   if (typeof req.maxTokens === 'number') body.max_tokens = req.maxTokens;
@@ -100,30 +110,73 @@ async function callOpenAICompat(
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     Authorization: `Bearer ${req.apiKey}`,
+    Accept: stream ? 'text/event-stream' : 'application/json',
   };
 
-  // OpenRouter 推荐附带这两个 header(用于 OpenRouter 的统计)
   if (isOpenRouter) {
     headers['HTTP-Referer'] = 'https://root-lingo.vercel.app';
     headers['X-Title'] = 'ROOT LINGO';
   }
 
-  const upstream = await fetch(endpoint, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify(body),
-    signal: req.signal,
-  });
+  let upstream: Response;
+  try {
+    upstream = await fetch(endpoint, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(body),
+      signal: req.signal,
+    });
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    return new Response(
+      JSON.stringify({ error: `${req.route.via} 连接失败: ${msg}` }),
+      { status: 502, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
 
   if (!upstream.ok) {
     const errText = await upstream.text();
     return new Response(
-      JSON.stringify({ error: `${req.route.via} ${upstream.status}: ${errText.slice(0, 500)}` }),
+      JSON.stringify({
+        error: `${req.route.via} 返回 ${upstream.status}: ${errText.slice(0, 800)}`,
+      }),
       { status: upstream.status, headers: { 'Content-Type': 'application/json' } }
     );
   }
 
-  // OpenAI 协议 SSE 转成我们的统一格式
+  // 非流式:一次性拿到完整 JSON,包装成单块 SSE 返回给前端
+  if (!stream) {
+    let json: { choices?: Array<{ message?: { content?: string } }> };
+    try {
+      json = await upstream.json();
+    } catch (e) {
+      const raw = await upstream.text().catch(() => '');
+      return new Response(
+        JSON.stringify({ error: `${req.route.via} 响应解析失败: ${raw.slice(0, 500)}` }),
+        { status: 502, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+    const text = json.choices?.[0]?.message?.content || '';
+    const encoder = new TextEncoder();
+    const singleChunkStream = new ReadableStream<Uint8Array>({
+      start(controller) {
+        if (text) {
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ delta: text })}\n\n`));
+        }
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ done: true })}\n\n`));
+        controller.close();
+      },
+    });
+    return new Response(singleChunkStream, {
+      headers: {
+        'Content-Type': 'text/event-stream; charset=utf-8',
+        'Cache-Control': 'no-cache, no-transform',
+        'X-Accel-Buffering': 'no',
+      },
+    });
+  }
+
+  // 流式:转协议
   return new Response(transformOpenAISSE(upstream.body!), {
     headers: {
       'Content-Type': 'text/event-stream; charset=utf-8',
