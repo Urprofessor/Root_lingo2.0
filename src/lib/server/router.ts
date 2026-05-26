@@ -50,14 +50,14 @@ export const MODEL_ROUTES: Record<string, ModelRoute[]> = {
   'gemini-3.1-pro-preview': [{ via: 'openrouter', modelId: 'google/gemini-3.1-pro-preview' }],
   'gemini-3-flash-preview': [{ via: 'openrouter', modelId: 'google/gemini-3-flash-preview' }],
 
-  // ========== DeepSeek — 官方优先,OpenRouter 兜底 ==========
+  // ========== DeepSeek — OpenRouter 优先,官方兜底 ==========
   'deepseek-v4-pro': [
-    { via: 'deepseek',   modelId: 'deepseek-v4-pro' },
     { via: 'openrouter', modelId: 'deepseek/deepseek-v4-pro' },
+    { via: 'deepseek',   modelId: 'deepseek-v4-pro' },
   ],
   'deepseek-v4-flash': [
-    { via: 'deepseek',   modelId: 'deepseek-v4-flash' },
     { via: 'openrouter', modelId: 'deepseek/deepseek-v4-flash' },
+    { via: 'deepseek',   modelId: 'deepseek-v4-flash' },
   ],
 };
 
