@@ -11,6 +11,7 @@ import { OutputPanel } from '@/components/output-panel/OutputPanel';
 import { GlossaryPage } from '@/components/pages/GlossaryPage';
 import { PromptTemplatePage } from '@/components/pages/PromptTemplatePage';
 import { TipsLocalizationPage } from '@/components/pages/TipsLocalizationPage';
+import { ExcelTranslatePage } from '@/components/pages/ExcelTranslatePage';
 import { AccountPage } from '@/components/pages/AccountPage';
 import { SettingsPage } from '@/components/pages/SettingsPage';
 import type { ActiveView } from '@/types/view';
@@ -37,6 +38,11 @@ function AuthenticatedApp() {
           <div className="flex-1 overflow-hidden">
             {activeView === 'workspace' && <Workspace />}
             {activeView === 'tips' && <TipsLocalizationPage />}
+            {activeView === 'excel' && (
+              <div className="h-full overflow-y-auto">
+                <ExcelTranslatePage />
+              </div>
+            )}
             {activeView === 'glossary' && <GlossaryPage />}
             {activeView === 'templates' && <PromptTemplatePage />}
             {activeView === 'api-keys' && <AccountPage />}

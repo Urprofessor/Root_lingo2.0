@@ -1,6 +1,6 @@
 'use client';
 
-import { Home, BookOpen, FileText, UserCircle, Settings, ShieldCheck, LogOut, Languages } from 'lucide-react';
+import { Home, BookOpen, FileText, UserCircle, Settings, ShieldCheck, LogOut, Languages, FileSpreadsheet } from 'lucide-react';
 import { Logo } from './Logo';
 import { cn } from '@/lib/utils/cn';
 import type { ActiveView } from '@/types/view';
@@ -14,6 +14,7 @@ interface SidebarProps {
 const NAV_ITEMS: { id: ActiveView; icon: React.ReactNode; label: string }[] = [
   { id: 'workspace', icon: <Home size={18} />, label: '工作台' },
   { id: 'tips', icon: <Languages size={18} />, label: 'Tips 本地化' },
+  { id: 'excel', icon: <FileSpreadsheet size={18} />, label: 'Excel 翻译' },
   { id: 'glossary', icon: <BookOpen size={18} />, label: '术语库' },
   { id: 'templates', icon: <FileText size={18} />, label: '提示词模板' },
   { id: 'api-keys', icon: <UserCircle size={18} />, label: '账户' },
