@@ -26,6 +26,8 @@ export interface ExcelTranslationStore {
   setSelectionMode: (idx: number, mode: SheetSelectionMode) => void;
   toggleColumn: (idx: number, col: number) => void;
   toggleRow: (idx: number, row: number) => void;
+  setSelectedColumns: (idx: number, cols: number[]) => void;
+  setSelectedRows: (idx: number, rows: number[]) => void;
   setOutputMode: (idx: number, mode: SheetOutputMode) => void;
   setSkipHeaderRow: (idx: number, skip: boolean) => void;
 
@@ -127,6 +129,20 @@ export const useExcelTranslation = create<ExcelTranslationStore>((set) => ({
         ...next[idx],
         selectedRows: exists ? cur.filter((r) => r !== row) : [...cur, row],
       };
+      return { sheetConfigs: next };
+    }),
+  setSelectedColumns: (idx, cols) =>
+    set((state) => {
+      const next = [...state.sheetConfigs];
+      if (!next[idx]) return state;
+      next[idx] = { ...next[idx], selectedColumns: Array.from(new Set(cols)).sort((a, b) => a - b) };
+      return { sheetConfigs: next };
+    }),
+  setSelectedRows: (idx, rows) =>
+    set((state) => {
+      const next = [...state.sheetConfigs];
+      if (!next[idx]) return state;
+      next[idx] = { ...next[idx], selectedRows: Array.from(new Set(rows)).sort((a, b) => a - b) };
       return { sheetConfigs: next };
     }),
   setOutputMode: (idx, mode) =>

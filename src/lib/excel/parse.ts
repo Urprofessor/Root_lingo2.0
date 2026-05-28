@@ -103,6 +103,72 @@ export function colIndexToLetter(i: number): string {
   return s;
 }
 
+// A -> 0, Z -> 25, AA -> 26, TU -> 540;非法字母返回 -1
+export function letterToColIndex(letter: string): number {
+  const s = letter.trim().toUpperCase();
+  if (!s) return -1;
+  let n = 0;
+  for (const c of s) {
+    if (c < 'A' || c > 'Z') return -1;
+    n = n * 26 + (c.charCodeAt(0) - 64);
+  }
+  return n - 1;
+}
+
+/**
+ * 解析列字母字符串,如 "A, C, E-G, TU"
+ * 返回 0-based 列索引数组(已去重并按 maxCol 过滤,无效区间静默跳过)
+ */
+export function parseColumnSpec(spec: string, maxCol: number): number[] {
+  const set = new Set<number>();
+  for (const raw of spec.split(/[,\s\n]+/)) {
+    const token = raw.trim();
+    if (!token) continue;
+    const dashIdx = token.indexOf('-');
+    if (dashIdx > 0) {
+      const a = letterToColIndex(token.slice(0, dashIdx));
+      const b = letterToColIndex(token.slice(dashIdx + 1));
+      if (a < 0 || b < 0) continue;
+      const lo = Math.min(a, b);
+      const hi = Math.max(a, b);
+      for (let i = lo; i <= hi; i++) {
+        if (i >= 0 && i < maxCol) set.add(i);
+      }
+    } else {
+      const i = letterToColIndex(token);
+      if (i >= 0 && i < maxCol) set.add(i);
+    }
+  }
+  return Array.from(set).sort((a, b) => a - b);
+}
+
+/**
+ * 解析行号字符串(1-based,如用户在 Excel 看到的),如 "1, 5, 10-15"
+ * 返回 0-based 行索引数组
+ */
+export function parseRowSpec(spec: string, maxRow: number): number[] {
+  const set = new Set<number>();
+  for (const raw of spec.split(/[,\s\n]+/)) {
+    const token = raw.trim();
+    if (!token) continue;
+    const dashIdx = token.indexOf('-');
+    if (dashIdx > 0) {
+      const a = Number(token.slice(0, dashIdx));
+      const b = Number(token.slice(dashIdx + 1));
+      if (!Number.isFinite(a) || !Number.isFinite(b)) continue;
+      const lo = Math.min(a, b) - 1;
+      const hi = Math.max(a, b) - 1;
+      for (let i = lo; i <= hi; i++) {
+        if (i >= 0 && i < maxRow) set.add(i);
+      }
+    } else {
+      const i = Number(token) - 1;
+      if (Number.isFinite(i) && i >= 0 && i < maxRow) set.add(i);
+    }
+  }
+  return Array.from(set).sort((a, b) => a - b);
+}
+
 // 单元格的"展示字符串"(用于预览 / 翻译前的文本提取)
 export function cellDisplay(cell: ExcelCell): string {
   if (cell.type === 'empty' || cell.raw == null) return '';

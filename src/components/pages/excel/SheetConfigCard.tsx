@@ -1,9 +1,14 @@
 'use client';
 
-import { ChevronDown, ChevronUp, Check, Eye, EyeOff } from 'lucide-react';
+import { ChevronDown, ChevronUp, Check, Eye, EyeOff, Plus, X } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils/cn';
-import { colIndexToLetter, cellDisplay } from '@/lib/excel/parse';
+import {
+  colIndexToLetter,
+  cellDisplay,
+  parseColumnSpec,
+  parseRowSpec,
+} from '@/lib/excel/parse';
 import type { ExcelSheetData, SheetConfig } from '@/types/excel';
 
 const PREVIEW_ROWS = 10;
@@ -18,6 +23,8 @@ interface Props {
   onSelectionModeChange: (mode: 'columns' | 'rows') => void;
   onToggleColumn: (col: number) => void;
   onToggleRow: (row: number) => void;
+  onSetSelectedColumns: (cols: number[]) => void;
+  onSetSelectedRows: (rows: number[]) => void;
   onSkipHeaderChange: (skip: boolean) => void;
   onOutputModeChange: (mode: 'full-copy' | 'selected-only') => void;
 }
@@ -30,6 +37,8 @@ export function SheetConfigCard({
   onSelectionModeChange,
   onToggleColumn,
   onToggleRow,
+  onSetSelectedColumns,
+  onSetSelectedRows,
   onSkipHeaderChange,
   onOutputModeChange,
 }: Props) {
@@ -149,11 +158,21 @@ export function SheetConfigCard({
             </div>
           </div>
 
+          {/* 已选 + 手动输入(用于超出预览范围的列/行) */}
+          <SelectionEditor
+            sheet={sheet}
+            config={config}
+            onToggleColumn={onToggleColumn}
+            onToggleRow={onToggleRow}
+            onSetSelectedColumns={onSetSelectedColumns}
+            onSetSelectedRows={onSetSelectedRows}
+          />
+
           {/* 预览 + 列/行选择 */}
           <div>
             <div className="mb-2 flex items-center justify-between">
               <p className="text-[11px] font-medium text-ink-500">
-                数据预览(点列头/行号选中)
+                数据预览(点列头/行号也可快速选)
               </p>
               {(hasMoreCols || hasMoreRows) && (
                 <p className="text-[10px] text-ink-400">
@@ -291,6 +310,161 @@ export function SheetConfigCard({
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+// ============================================================
+// 已选列/行 + 手动输入(支持超出预览范围)
+// ============================================================
+function SelectionEditor({
+  sheet,
+  config,
+  onToggleColumn,
+  onToggleRow,
+  onSetSelectedColumns,
+  onSetSelectedRows,
+}: {
+  sheet: ExcelSheetData;
+  config: SheetConfig;
+  onToggleColumn: (c: number) => void;
+  onToggleRow: (r: number) => void;
+  onSetSelectedColumns: (cols: number[]) => void;
+  onSetSelectedRows: (rows: number[]) => void;
+}) {
+  const [draft, setDraft] = useState('');
+  const [warn, setWarn] = useState('');
+  const isCols = config.selectionMode === 'columns';
+  const selected = isCols
+    ? [...config.selectedColumns].sort((a, b) => a - b)
+    : [...config.selectedRows].sort((a, b) => a - b);
+
+  function handleAdd() {
+    setWarn('');
+    if (!draft.trim()) return;
+    const parsed = isCols
+      ? parseColumnSpec(draft, sheet.colCount)
+      : parseRowSpec(draft, sheet.rowCount);
+    if (parsed.length === 0) {
+      setWarn(
+        isCols
+          ? `没解析到有效列(只能用字母,如 A、TU、B-D;此表共 ${sheet.colCount} 列,即 A 到 ${colIndexToLetter(sheet.colCount - 1)})`
+          : `没解析到有效行号(只能用数字,如 1、10-15;此表共 ${sheet.rowCount} 行)`
+      );
+      return;
+    }
+    const union = Array.from(new Set([...selected, ...parsed]));
+    if (isCols) onSetSelectedColumns(union);
+    else onSetSelectedRows(union);
+    setDraft('');
+  }
+
+  function handleClear() {
+    if (isCols) onSetSelectedColumns([]);
+    else onSetSelectedRows([]);
+  }
+
+  function handleSelectAll() {
+    if (isCols) {
+      const all = Array.from({ length: sheet.colCount }, (_, i) => i);
+      onSetSelectedColumns(all);
+    } else {
+      const all = Array.from({ length: sheet.rowCount }, (_, i) => i);
+      onSetSelectedRows(all);
+    }
+  }
+
+  return (
+    <div className="rounded-2xl border border-ink-200 bg-ink-50/40 p-3.5">
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <p className="text-[11px] font-medium text-ink-500">
+          已选 {isCols ? '列' : '行'}:{' '}
+          <span className="text-ink-700">{selected.length}</span>
+          <span className="ml-1.5 text-ink-400">
+            / {isCols ? sheet.colCount : sheet.rowCount}
+          </span>
+        </p>
+        <div className="flex gap-1.5">
+          <button
+            type="button"
+            onClick={handleSelectAll}
+            className="rounded-lg px-2 py-1 text-[10px] font-medium text-brand-700 hover:bg-brand-50"
+          >
+            全选
+          </button>
+          <button
+            type="button"
+            onClick={handleClear}
+            disabled={selected.length === 0}
+            className="rounded-lg px-2 py-1 text-[10px] font-medium text-ink-500 transition hover:bg-ink-100 hover:text-ink-700 disabled:opacity-40"
+          >
+            清空
+          </button>
+        </div>
+      </div>
+
+      {/* Chips */}
+      {selected.length > 0 ? (
+        <div className="mb-2.5 flex max-h-[120px] flex-wrap gap-1.5 overflow-y-auto">
+          {selected.map((i) => {
+            const label = isCols ? colIndexToLetter(i) : String(i + 1);
+            return (
+              <button
+                key={i}
+                type="button"
+                onClick={() => (isCols ? onToggleColumn(i) : onToggleRow(i))}
+                className="group inline-flex items-center gap-1 rounded-md bg-brand-100 px-2 py-0.5 font-mono text-[11px] font-semibold text-brand-800 transition hover:bg-red-100 hover:text-red-700"
+                title={`点击移除 ${label}`}
+              >
+                {label}
+                <X
+                  size={10}
+                  className="opacity-60 group-hover:opacity-100"
+                />
+              </button>
+            );
+          })}
+        </div>
+      ) : (
+        <p className="mb-2.5 text-[11px] italic text-ink-400">
+          还没选 {isCols ? '列' : '行'};在下面输入或点预览表格的{isCols ? '列头' : '行号'}
+        </p>
+      )}
+
+      {/* 手动输入 */}
+      <div className="flex gap-1.5">
+        <input
+          type="text"
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              handleAdd();
+            }
+          }}
+          placeholder={
+            isCols
+              ? '输入列字母,如 TU 或 A,C,E-G,TU'
+              : '输入行号,如 1, 5, 10-15(从 1 开始)'
+          }
+          className="h-9 flex-1 rounded-xl border border-ink-200 bg-white px-3 text-xs font-medium text-ink-800 outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-100"
+        />
+        <button
+          type="button"
+          onClick={handleAdd}
+          disabled={!draft.trim()}
+          className="inline-flex items-center gap-1 rounded-xl bg-brand-500 px-3 text-xs font-semibold text-white transition hover:bg-brand-600 disabled:opacity-40"
+        >
+          <Plus size={11} /> 添加
+        </button>
+      </div>
+      {warn && (
+        <p className="mt-1.5 text-[11px] text-amber-600">{warn}</p>
+      )}
+      <p className="mt-1.5 text-[10px] text-ink-400">
+        支持单个、逗号分隔、连字符表示区间(如 A-D)。重复添加自动去重。
+      </p>
     </div>
   );
 }

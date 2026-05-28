@@ -190,6 +190,8 @@ function SheetsConfigSection() {
   const setSelectionMode = useExcelTranslation((s) => s.setSelectionMode);
   const toggleColumn = useExcelTranslation((s) => s.toggleColumn);
   const toggleRow = useExcelTranslation((s) => s.toggleRow);
+  const setSelectedColumns = useExcelTranslation((s) => s.setSelectedColumns);
+  const setSelectedRows = useExcelTranslation((s) => s.setSelectedRows);
   const setSkipHeaderRow = useExcelTranslation((s) => s.setSkipHeaderRow);
   const setOutputMode = useExcelTranslation((s) => s.setOutputMode);
 
@@ -208,6 +210,8 @@ function SheetsConfigSection() {
             onSelectionModeChange={(m) => setSelectionMode(i, m)}
             onToggleColumn={(c) => toggleColumn(i, c)}
             onToggleRow={(r) => toggleRow(i, r)}
+            onSetSelectedColumns={(cols) => setSelectedColumns(i, cols)}
+            onSetSelectedRows={(rows) => setSelectedRows(i, rows)}
             onSkipHeaderChange={(s) => setSkipHeaderRow(i, s)}
             onOutputModeChange={(m) => setOutputMode(i, m)}
           />
