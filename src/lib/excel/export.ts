@@ -27,11 +27,9 @@ function toAoa(
   rows: ExcelCell[][]
 ): Array<Array<string | number | boolean | Date | null>> {
   return rows.map((row) =>
-    row.map((cell) => {
+    row.map((cell): string | number | boolean | Date | null => {
       if (cell.type === 'empty' || cell.raw == null) return null;
-      if (cell.type === 'date' && cell.raw instanceof Date) return cell.raw;
-      // 公式 / 数字 / 布尔 / 字符串都原样写
-      return cell.raw as string | number | boolean;
+      return cell.raw;
     })
   );
 }

@@ -46,23 +46,31 @@ export async function parseExcelFile(file: File): Promise<ExcelWorkbookData> {
   return { fileName: file.name, sheets };
 }
 
+// 把 xlsx 库返回的 unknown 值规整为联合类型,避免 TS 推断成 {} | null
+function normalizeRaw(v: unknown): string | number | boolean | Date | null {
+  if (v === undefined || v === null || v === '') return null;
+  if (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean') return v;
+  if (v instanceof Date) return v;
+  return String(v);
+}
+
 function toCell(cell: XlsxCell | undefined): ExcelCell {
   if (!cell || cell.v === undefined || cell.v === null || cell.v === '') {
     if (cell?.f) {
-      return { raw: cell.v ?? null, type: 'formula', formula: cell.f };
+      return { raw: normalizeRaw(cell.v), type: 'formula', formula: cell.f };
     }
     return { raw: null, type: 'empty' };
   }
   // 公式优先识别
   if (cell.f) {
-    return { raw: cell.v ?? null, type: 'formula', formula: cell.f };
+    return { raw: normalizeRaw(cell.v), type: 'formula', formula: cell.f };
   }
   let type: ExcelCellType;
   let raw: ExcelCell['raw'];
   switch (cell.t) {
     case 's':
       type = 'string';
-      raw = String(cell.v ?? '');
+      raw = typeof cell.v === 'string' ? cell.v : String(cell.v);
       break;
     case 'n':
       type = 'number';
