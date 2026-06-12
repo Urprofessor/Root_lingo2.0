@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   UploadCloud,
   FileType,
@@ -10,20 +10,23 @@ import {
   Loader2,
   X,
   FileCheck,
+  Layers,
   type LucideIcon,
 } from 'lucide-react';
 import { Panel } from '@/components/ui/Panel';
 import { useTranslationStore } from '@/store/useTranslationStore';
 import { parseFile } from '@/lib/parsers';
 import { cn } from '@/lib/utils/cn';
+import { BatchInputView } from './BatchInputView';
 
-type InputTab = 'text' | 'file' | 'image' | 'srt';
+type InputTab = 'text' | 'file' | 'image' | 'srt' | 'batch';
 
 const INPUT_TABS: { id: InputTab; label: string; icon: LucideIcon }[] = [
   { id: 'text', label: '粘贴文本', icon: Type },
   { id: 'file', label: '上传文件', icon: FileType },
   { id: 'image', label: '图片 OCR', icon: ImageIcon },
   { id: 'srt', label: '字幕 .srt', icon: Subtitles },
+  { id: 'batch', label: '批量文件', icon: Layers },
 ];
 
 const SUPPORTED_FORMATS = ['.txt', '.md', '.docx', '.pdf', '.pptx', '.xlsx', '.srt', '图片'];
@@ -34,6 +37,12 @@ export function InputPanel() {
   const input = useTranslationStore((s) => s.input);
   const setInput = useTranslationStore((s) => s.setInput);
   const setInputText = useTranslationStore((s) => s.setInputText);
+  const setInputMode = useTranslationStore((s) => s.setInputMode);
+
+  // 切换 tab 时同步 inputMode 给 OutputPanel
+  useEffect(() => {
+    setInputMode(activeTab === 'batch' ? 'batch' : 'single');
+  }, [activeTab, setInputMode]);
   const [parsing, setParsing] = useState(false);
   const [parseProgress, setParseProgress] = useState<number | null>(null);
   const [parseError, setParseError] = useState<string | null>(null);
@@ -98,6 +107,8 @@ export function InputPanel() {
         <TextInputArea value={input.text} onChange={setInputText} charCount={charCount} />
       )}
 
+      {activeTab === 'batch' && <BatchInputView />}
+
       {(activeTab === 'file' || activeTab === 'image' || activeTab === 'srt') && (
         <FileInputArea
           accept={
@@ -129,19 +140,21 @@ export function InputPanel() {
         />
       )}
 
-      <div className="mt-5">
-        <p className="mb-2 text-xs font-semibold text-ink-700">支持格式</p>
-        <div className="flex flex-wrap gap-1.5">
-          {SUPPORTED_FORMATS.map((fmt) => (
-            <span
-              key={fmt}
-              className="inline-flex items-center rounded-lg border border-ink-200 bg-white px-2 py-1 text-[10px] font-medium text-ink-600 shadow-apple-sm"
-            >
-              {fmt}
-            </span>
-          ))}
+      {activeTab !== 'batch' && (
+        <div className="mt-5">
+          <p className="mb-2 text-xs font-semibold text-ink-700">支持格式</p>
+          <div className="flex flex-wrap gap-1.5">
+            {SUPPORTED_FORMATS.map((fmt) => (
+              <span
+                key={fmt}
+                className="inline-flex items-center rounded-lg border border-ink-200 bg-white px-2 py-1 text-[10px] font-medium text-ink-600 shadow-apple-sm"
+              >
+                {fmt}
+              </span>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </Panel>
   );
 }

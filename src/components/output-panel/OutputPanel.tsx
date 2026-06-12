@@ -20,8 +20,24 @@ import { useTranslationActions } from '@/store/useTranslationActions';
 import { getLanguage } from '@/lib/utils/languages';
 import { exportTxt, exportMarkdown, exportDocx, exportPdf, exportZip, type ZipFormat } from '@/lib/exporters';
 import { cn } from '@/lib/utils/cn';
+import { BatchOutputView } from './BatchOutputView';
 
 export function OutputPanel() {
+  const inputMode = useTranslationStore((s) => s.inputMode);
+
+  // 批量模式 → 完全切换到批量视图
+  if (inputMode === 'batch') {
+    return (
+      <Panel number="3" title="批量翻译" noBorderRight>
+        <BatchOutputView />
+      </Panel>
+    );
+  }
+
+  return <SingleOutputPanel />;
+}
+
+function SingleOutputPanel() {
   const settings = useTranslationStore((s) => s.settings);
   const result = useTranslationStore((s) => s.result);
   const isTranslating = useTranslationStore((s) => s.isTranslating);
