@@ -90,6 +90,11 @@ export async function buildDocxBlobFromStructured(
     // 没对应的译文段(译文段数 < 原文段数) → 保留原段不动,不要清空
     if (!payload) continue;
 
+    // 剥掉模型可能加上的 markdown 标记 —— docx 走段落级,标记进来就是字面字符,
+    // 必须清理(否则会看到字面 ** 双星号、# 号、- 横杠等)
+    payload = stripInlineMarkdown(payload);
+    if (!payload) continue;
+
     replaceParagraphText(p, payload);
   }
 
@@ -160,4 +165,57 @@ function setTextContent(tNode: Element, text: string): void {
   // 保留首尾空白
   tNode.setAttribute('xml:space', 'preserve');
   tNode.textContent = text;
+}
+
+/**
+ * 剥掉译文里的 inline markdown 标记
+ *
+ * 为什么需要:
+ * - 路径 A 走段落级翻译,不解析段落内的局部加粗/斜体
+ * - 模型有时会主动在重要术语周围加上 **强调**(尤其当 prompt 里有"保留 markdown"指令时)
+ * - 这些标记如果直接进 docx,会以字面双星号 / 单星号 / # 号显示
+ *
+ * 这个函数只对 docx 路径调用;.md / .txt 路径不动,保持模型原始输出
+ *
+ * 处理顺序很重要:先长后短,避免内层匹配把外层的关键字符吞掉
+ */
+function stripInlineMarkdown(text: string): string {
+  let out = text;
+
+  // 1. 三重星号(罕见但有)
+  out = out.replace(/\*\*\*([^*\n]+?)\*\*\*/g, '$1');
+
+  // 2. 粗体:**text** 和 __text__
+  out = out.replace(/\*\*([^*\n]+?)\*\*/g, '$1');
+  out = out.replace(/__([^_\n]+?)__/g, '$1');
+
+  // 3. 斜体:*text* 和 _text_(避开剩余的 ** 或 __)
+  out = out.replace(/(^|[^*])\*([^*\n]+?)\*(?!\*)/g, '$1$2');
+  out = out.replace(/(^|[^_\w])_([^_\n]+?)_(?![_\w])/g, '$1$2');
+
+  // 4. 删除线:~~text~~
+  out = out.replace(/~~([^~\n]+?)~~/g, '$1');
+
+  // 5. 内联代码:`code`
+  out = out.replace(/`([^`\n]+?)`/g, '$1');
+
+  // 6. 标题(行首 # ~ ######)
+  out = out.replace(/^[ \t]{0,3}#{1,6}[ \t]+/gm, '');
+
+  // 7. 引用(行首 >)
+  out = out.replace(/^[ \t]{0,3}>+[ \t]?/gm, '');
+
+  // 8. 无序列表标记(- / * / + 后跟空格,在行首)
+  out = out.replace(/^[ \t]{0,3}[-*+][ \t]+/gm, '');
+
+  // 9. 有序列表标记(1. / 2. 等,在行首)
+  out = out.replace(/^[ \t]{0,3}\d+\.[ \t]+/gm, '');
+
+  // 10. 链接 [text](url) → text
+  out = out.replace(/\[([^\]\n]+?)\]\([^)\n]+?\)/g, '$1');
+
+  // 11. 图片 ![alt](url) → alt
+  out = out.replace(/!\[([^\]\n]*?)\]\([^)\n]+?\)/g, '$1');
+
+  return out;
 }
