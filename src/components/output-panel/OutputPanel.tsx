@@ -78,7 +78,12 @@ export function OutputPanel() {
 
   const canTranslate = input.text.trim().length > 0 && targetLanguages.length > 0 && !isTranslating;
 
-  const filenameBase = `rootlingo-${activeOutputLang}`;
+  // 输出文件名基础部分 —— 优先用原文件名,否则用 rootlingo
+  const sourceBaseName = useMemo(() => {
+    const raw = input.fileName?.replace(/\.[^.]+$/, '');
+    return raw && raw.trim().length > 0 ? raw : 'rootlingo';
+  }, [input.fileName]);
+  const filenameBase = `${sourceBaseName}-${activeOutputLang}`;
 
   async function handleDownload(format: 'txt' | 'md' | 'docx' | 'pdf') {
     if (!currentText) return;
@@ -86,8 +91,10 @@ export function OutputPanel() {
     try {
       if (format === 'txt') exportTxt(currentText, filenameBase);
       else if (format === 'md') exportMarkdown(currentText, filenameBase);
-      else if (format === 'docx') await exportDocx(currentText, filenameBase);
-      else if (format === 'pdf') await exportPdf(currentText, filenameBase);
+      else if (format === 'docx') {
+        // 如果原文件是 .docx 且解析出了结构,用结构化导出(保留格式)
+        await exportDocx(currentText, filenameBase, input.docxStructured);
+      } else if (format === 'pdf') await exportPdf(currentText, filenameBase);
     } finally {
       setDownloading(false);
     }
@@ -98,7 +105,14 @@ export function OutputPanel() {
     setDownloading(true);
     setZipMenuOpen(false);
     try {
-      await exportZip(result.final, format);
+      await exportZip({
+        perLangText: result.final,
+        format,
+        baseName: sourceBaseName,
+        zipName: `${sourceBaseName}-translations`,
+        // 如果原文件是 .docx 且解析出了结构,zip 里的 docx 也保留格式
+        docxStructured: format === 'docx' ? input.docxStructured : undefined,
+      });
     } finally {
       setDownloading(false);
     }

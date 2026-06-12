@@ -49,6 +49,18 @@ export interface InputContent {
   fileName?: string;
   fileType?: string;       // mime 或扩展名
   srtCues?: SrtCue[];      // srt 专用,保留时间戳
+  docxStructured?: DocxStructured;  // .docx 专用,保留原 zip + 段落映射(运行时引用,不序列化)
+}
+
+// JSZip 实例的最小化接口(避免在 types 文件里 import JSZip 主类)
+export interface DocxStructured {
+  zip: unknown;            // JSZip 实例
+  documentXml: string;     // 原 word/document.xml
+  paragraphRefs: Array<{
+    pIndex: number;        // 该 <w:p> 在 document.xml 中的索引
+    hasText: boolean;      // 是否含可翻译文本
+    text: string;          // 原始拼接文本
+  }>;
 }
 
 export interface SrtCue {

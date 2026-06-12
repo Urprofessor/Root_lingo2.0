@@ -1,5 +1,5 @@
 import { parseTxt, parseMarkdown } from './txt';
-import { parseDocx } from './docx';
+import { parseDocx, parseDocxStructured } from './docx';
 import { parsePdf } from './pdf';
 import { parseXlsx } from './xlsx';
 import { parsePptx } from './pptx';
@@ -27,8 +27,20 @@ export async function parseFile(
   }
 
   if (ext === 'docx') {
-    const text = await parseDocx(file);
-    return { type: 'file', text, fileName: name, fileType: ext };
+    // 优先用结构化解析(保留格式 + 段落映射);失败回退到纯文本
+    try {
+      const { text, structured } = await parseDocxStructured(file);
+      return {
+        type: 'file',
+        text,
+        fileName: name,
+        fileType: ext,
+        docxStructured: structured,
+      };
+    } catch {
+      const text = await parseDocx(file);
+      return { type: 'file', text, fileName: name, fileType: ext };
+    }
   }
 
   if (ext === 'pdf') {
