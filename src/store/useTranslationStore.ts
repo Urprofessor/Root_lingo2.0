@@ -15,6 +15,10 @@ import {
 } from '@/lib/utils/models';
 
 interface TranslationStore {
+  // 工作台输入模式 — 单文件 vs 批量
+  inputMode: InputMode;
+  setInputMode: (mode: InputMode) => void;
+
   // 输入
   input: InputContent;
   setInput: (input: InputContent) => void;
@@ -61,6 +65,8 @@ interface TranslationStore {
 
 export type OutputView = 'final' | 'model-a' | 'model-b' | 'judge' | 'source' | 'self-review';
 
+export type InputMode = 'single' | 'batch';
+
 const DEFAULT_SETTINGS: TranslationSettings = {
   mode: 'multi',
   sourceLanguage: 'auto',
@@ -83,6 +89,9 @@ const DEFAULT_INPUT: InputContent = {
 };
 
 export const useTranslationStore = create<TranslationStore>((set) => ({
+  inputMode: 'single' as InputMode,
+  setInputMode: (inputMode) => set({ inputMode }),
+
   input: DEFAULT_INPUT,
   setInput: (input) => set({ input }),
   setInputText: (text) =>
