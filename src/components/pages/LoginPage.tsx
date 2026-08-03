@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Loader2, Lock, User, AlertCircle, ShieldCheck } from 'lucide-react';
 import { Logo } from '@/components/layout/Logo';
+import SideRays from '@/components/effects/SideRays';
 import { useAuthStore } from '@/store/useAuthStore';
 import { cn } from '@/lib/utils/cn';
 
@@ -33,20 +34,31 @@ export function LoginPage() {
   const canSubmit = username.trim().length > 0 && password.length > 0 && !submitting;
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-ink-100 px-6 py-10">
-      {/* 背景装饰 - Apple 风格的微妙渐变 */}
-      <div className="pointer-events-none fixed inset-0 -z-10">
-        <div className="absolute left-1/2 top-0 h-[600px] w-[800px] -translate-x-1/2 rounded-full bg-brand-50 opacity-60 blur-[120px]" />
-        <div className="absolute bottom-0 right-0 h-[400px] w-[500px] rounded-full bg-brand-100 opacity-40 blur-[100px]" />
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-ink-900 px-6 py-10">
+      {/* 背景 — SideRays 动态光束 */}
+      <div className="pointer-events-none fixed inset-0 z-0">
+        <SideRays
+          speed={2.5}
+          rayColor1="#EAB308"
+          rayColor2="#96c8ff"
+          intensity={2}
+          spread={2}
+          origin="top-right"
+          tilt={0}
+          saturation={1.5}
+          blend={0.75}
+          falloff={1.6}
+          opacity={1}
+        />
       </div>
 
-      <div className="w-full max-w-[420px]">
+      <div className="relative z-10 w-full max-w-[420px]">
         <div className="mb-8 flex flex-col items-center">
           <Logo size="lg" showText={false} />
-          <h1 className="mt-4 text-2xl font-semibold tracking-tight text-ink-900">
-            ROOT<span className="text-brand-500">·</span>LINGO
+          <h1 className="mt-4 text-2xl font-semibold tracking-tight text-white">
+            ROOT<span className="text-brand-400">·</span>LINGO
           </h1>
-          <p className="mt-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-500">
+          <p className="mt-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-400">
             AI Translation Studio
           </p>
         </div>
@@ -129,8 +141,8 @@ export function LoginPage() {
           </button>
         </form>
 
-        <div className="mt-5 flex items-center justify-center gap-1.5 text-[11px] text-ink-500">
-          <ShieldCheck size={11} className="text-brand-500" />
+        <div className="mt-5 flex items-center justify-center gap-1.5 text-[11px] text-ink-400">
+          <ShieldCheck size={11} className="text-brand-400" />
           翻译内容通过 ROOT LINGO 无状态代理转发,不记录、不存储
         </div>
       </div>

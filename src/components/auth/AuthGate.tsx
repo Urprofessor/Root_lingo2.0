@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { LoginPage } from '@/components/pages/LoginPage';
+import { LoginTransition } from '@/components/auth/LoginTransition';
 import { Loader2 } from 'lucide-react';
 import { Logo } from '@/components/layout/Logo';
 
@@ -10,9 +11,23 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
   const status = useAuthStore((s) => s.status);
   const checkSession = useAuthStore((s) => s.checkSession);
 
+  // Whether the login page was actually shown — so the reveal animation only
+  // plays after an explicit sign-in, not on a silent session restore/refresh.
+  const sawLogin = useRef(false);
+  const [transitioning, setTransitioning] = useState(false);
+
   useEffect(() => {
     if (status === 'idle') checkSession();
   }, [status, checkSession]);
+
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      sawLogin.current = true;
+    } else if (status === 'authenticated' && sawLogin.current) {
+      sawLogin.current = false;
+      setTransitioning(true);
+    }
+  }, [status]);
 
   if (status === 'idle' || status === 'checking') {
     return (
@@ -30,5 +45,12 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
     return <LoginPage />;
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      {transitioning && (
+        <LoginTransition onComplete={() => setTransitioning(false)} />
+      )}
+    </>
+  );
 }
