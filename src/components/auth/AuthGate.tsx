@@ -29,6 +29,12 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
     }
   }, [status]);
 
+  // 登录请求进行中(用户是从登录页点进来的):保持登录框显示——它自带
+  // "登录中……" 的按钮态。白色加载页只留给 App 首次启动时的 session 校验。
+  if (status === 'checking' && sawLogin.current) {
+    return <LoginPage />;
+  }
+
   if (status === 'idle' || status === 'checking') {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center gap-4 bg-ink-100">
