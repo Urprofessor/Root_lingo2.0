@@ -4,8 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { LoginPage } from '@/components/pages/LoginPage';
 import { LoginTransition } from '@/components/auth/LoginTransition';
-import { Loader2 } from 'lucide-react';
-import { Logo } from '@/components/layout/Logo';
+import { BrandKineticScreen } from '@/components/effects/BrandKineticScreen';
 
 export function AuthGate({ children }: { children: React.ReactNode }) {
   const status = useAuthStore((s) => s.status);
@@ -37,13 +36,9 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
 
   if (status === 'idle' || status === 'checking') {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center gap-4 bg-ink-100">
-        <Logo size="lg" showText={false} />
-        <div className="flex items-center gap-2 text-sm text-ink-500">
-          <Loader2 size={14} className="animate-spin text-brand-500" />
-          <span>正在加载……</span>
-        </div>
-      </main>
+      <div className="fixed inset-0 z-50">
+        <BrandKineticScreen />
+      </div>
     );
   }
 

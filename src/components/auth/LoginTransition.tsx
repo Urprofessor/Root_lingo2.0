@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import KineticTextGrid from '@/components/effects/KineticTextGrid';
+import { BrandKineticScreen } from '@/components/effects/BrandKineticScreen';
 
 /** How long the kinetic text plays before it fades away to reveal the app. */
 const PLAY_MS = 2200;
@@ -9,7 +9,7 @@ const PLAY_MS = 2200;
 const FADE_MS = 650;
 
 /**
- * Full-screen overlay that plays the kinetic "ROOT LINGO" reveal after a
+ * Full-screen overlay that plays the multilingual "ROOT LINGO" reveal after a
  * successful login, then fades out to hand off to the authenticated app.
  */
 export function LoginTransition({ onComplete }: { onComplete: () => void }) {
@@ -34,24 +34,7 @@ export function LoginTransition({ onComplete }: { onComplete: () => void }) {
         pointerEvents: fading ? 'none' : 'auto',
       }}
     >
-      <KineticTextGrid
-        text="ROOT LINGO"
-        backgroundColor="#1d1d1f"
-        textColor="#ffffff"
-        rowCount={5}
-        repeatCount={5}
-        expandDurationSec={0.9}
-        holdDurationSec={0.8}
-        font={{
-          fontFamily:
-            '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif',
-          fontWeight: 700,
-          fontSize: 'clamp(28px, 6vw, 64px)',
-          lineHeight: '1.5em',
-          letterSpacing: '-0.02em',
-          textAlign: 'left',
-        }}
-      />
+      <BrandKineticScreen />
     </div>
   );
 }

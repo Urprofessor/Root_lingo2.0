@@ -18,6 +18,9 @@ type Transition = {
 
 type Props = {
   text?: string;
+  /** Optional per-cell texts (e.g. "ROOT LINGO" in many languages). The
+   *  surviving center word always uses `text`; grid cells cycle through these. */
+  texts?: string[];
   font?: React.CSSProperties;
   textColor?: string;
   backgroundColor?: string;
@@ -36,6 +39,7 @@ type Props = {
 export default function KineticTextGrid(props: Props) {
   const {
     text = 'APPEAR TEXT',
+    texts = [],
     font = {
       fontFamily: 'Inter',
       fontWeight: 700,
@@ -202,6 +206,15 @@ export default function KineticTextGrid(props: Props) {
                   );
                 }
 
+                // Grid cells cycle through the provided languages (spread
+                // deterministically so neighbours differ); falls back to `text`.
+                const cellText =
+                  texts.length > 0
+                    ? texts[
+                        (rowIndex * 7 + wordIndex * 3) % texts.length
+                      ]
+                    : text;
+
                 const denom = Math.max(1, safeRepeatCount - 1);
                 const sweepT = wipeLTR
                   ? wordIndex / denom
@@ -247,7 +260,7 @@ export default function KineticTextGrid(props: Props) {
                       ...fontStyles,
                     }}
                   >
-                    {text}
+                    {cellText}
                   </motion.span>
                 );
               })}
