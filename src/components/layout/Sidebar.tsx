@@ -28,7 +28,7 @@ export function Sidebar({ activeView, onChange }: SidebarProps) {
   return (
     <aside className="flex w-[260px] shrink-0 flex-col border-r border-ink-200 bg-ink-50/60 px-5 py-6">
       <div className="mb-9 px-2">
-        <Logo size="md" />
+        <Logo size="md" showIcon={false} />
       </div>
 
       <nav className="space-y-1.5">

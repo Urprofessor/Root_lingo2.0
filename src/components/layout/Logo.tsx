@@ -7,6 +7,8 @@ import ShinyText from '@/components/effects/ShinyText';
 interface LogoProps {
   size?: 'sm' | 'md' | 'lg';
   showText?: boolean;
+  /** 是否显示品牌图标(信号波 / PNG)。暂时隐藏图标时传 false。 */
+  showIcon?: boolean;
   className?: string;
 }
 
@@ -18,7 +20,7 @@ interface LogoProps {
  *
  * 图标 + 文字的组合:左边是图,右边是 "ROOT·LINGO" 文字。
  */
-export function Logo({ size = 'md', showText = true, className }: LogoProps) {
+export function Logo({ size = 'md', showText = true, showIcon = true, className }: LogoProps) {
   const dimensions = {
     sm: { icon: 28, gap: 8, text: 'text-base' },
     md: { icon: 36, gap: 10, text: 'text-lg' },
@@ -28,7 +30,7 @@ export function Logo({ size = 'md', showText = true, className }: LogoProps) {
 
   return (
     <div className={cn('flex items-center', className)} style={{ gap: d.gap }}>
-      <LogoIcon size={d.icon} />
+      {showIcon && <LogoIcon size={d.icon} />}
       {showText && (
         <div className="flex flex-col leading-none">
           <span
