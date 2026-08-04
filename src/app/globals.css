@@ -3,6 +3,57 @@
 @tailwind utilities;
 
 @layer base {
+  /* 中性色 + white 的 RGB 三元组(供 tailwind 的 rgb(var(--x) / <alpha>) 使用)。
+     :root = 原浅色值,作用域外(如登录页)保持不变。 */
+  :root {
+    --ink-50: 250 250 250;
+    --ink-100: 245 245 247;
+    --ink-200: 232 232 237;
+    --ink-300: 210 210 215;
+    --ink-400: 161 161 166;
+    --ink-500: 134 134 139;
+    --ink-600: 110 110 115;
+    --ink-700: 72 72 74;
+    --ink-800: 44 44 46;
+    --ink-900: 29 29 31;
+    --white: 255 255 255;
+  }
+
+  /* 已认证主界面:把中性阶整体翻转成暗色,white 变成暗色表面。
+     一处调色即可影响全站,登录页不受影响。 */
+  .app-dark {
+    --ink-50: 24 24 27;
+    --ink-100: 15 15 17;
+    --ink-200: 46 46 50;
+    --ink-300: 62 62 67;
+    --ink-400: 124 124 130;
+    --ink-500: 152 152 158;
+    --ink-600: 178 178 184;
+    --ink-700: 206 206 212;
+    --ink-800: 230 230 235;
+    --ink-900: 244 244 247;
+    --white: 30 30 33;
+  }
+
+  /* 暗色作用域下的滚动条 / 滑杆轨道 */
+  .app-dark ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.14);
+    background-clip: padding-box;
+  }
+  .app-dark ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.24);
+    background-clip: padding-box;
+  }
+  .app-dark input[type='range'] {
+    background: linear-gradient(
+      to right,
+      #34c759 0%,
+      #34c759 var(--val, 50%),
+      #2e2e32 var(--val, 50%),
+      #2e2e32 100%
+    );
+  }
+
   html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

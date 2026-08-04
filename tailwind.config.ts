@@ -44,19 +44,22 @@ const config: Config = {
           800: '#176629',
           900: '#0f4a1d',
         },
-        // 中性色 — 偏 Apple 的灰阶
+        // 中性色 — 偏 Apple 的灰阶。用 CSS 变量驱动,便于整体明暗切换
+        // (变量定义见 globals.css :root / .app-dark)。
         ink: {
-          50: '#fafafa',
-          100: '#f5f5f7',  // Apple 标志性浅灰背景
-          200: '#e8e8ed',
-          300: '#d2d2d7',
-          400: '#a1a1a6',
-          500: '#86868b',
-          600: '#6e6e73',
-          700: '#48484a',
-          800: '#2c2c2e',
-          900: '#1d1d1f',  // Apple 标志性深色
+          50: 'rgb(var(--ink-50) / <alpha-value>)',
+          100: 'rgb(var(--ink-100) / <alpha-value>)',
+          200: 'rgb(var(--ink-200) / <alpha-value>)',
+          300: 'rgb(var(--ink-300) / <alpha-value>)',
+          400: 'rgb(var(--ink-400) / <alpha-value>)',
+          500: 'rgb(var(--ink-500) / <alpha-value>)',
+          600: 'rgb(var(--ink-600) / <alpha-value>)',
+          700: 'rgb(var(--ink-700) / <alpha-value>)',
+          800: 'rgb(var(--ink-800) / <alpha-value>)',
+          900: 'rgb(var(--ink-900) / <alpha-value>)',
         },
+        // white 同样变量化:.app-dark 里翻成暗色表面(登录页在作用域外仍是纯白)
+        white: 'rgb(var(--white) / <alpha-value>)',
       },
       borderRadius: {
         '4xl': '28px',

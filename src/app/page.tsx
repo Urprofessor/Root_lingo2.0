@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { AuthGate } from '@/components/auth/AuthGate';
+import SideRays from '@/components/effects/SideRays';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -28,7 +29,31 @@ function AuthenticatedApp() {
   const [activeView, setActiveView] = useState<ActiveView>('workspace');
 
   return (
-    <main className="min-h-screen bg-ink-100 text-ink-900">
+    <main className="app-dark relative min-h-screen text-ink-900">
+      {/* 暗色底 + SideRays 背景 — 与登录页统一风格 */}
+      <div
+        className="pointer-events-none fixed inset-0 -z-10"
+        style={{
+          background:
+            'radial-gradient(120% 90% at 50% 0%, #17171a 0%, #0c0c0e 62%)',
+        }}
+      />
+      <div className="pointer-events-none fixed inset-0 -z-10">
+        <SideRays
+          speed={2.5}
+          rayColor1="#EAB308"
+          rayColor2="#96c8ff"
+          intensity={1.4}
+          spread={2}
+          origin="top-right"
+          tilt={0}
+          saturation={1.4}
+          blend={0.75}
+          falloff={1.7}
+          opacity={0.55}
+        />
+      </div>
+
       <div className="mx-auto flex min-h-screen max-w-[1728px] overflow-hidden">
         <Sidebar activeView={activeView} onChange={setActiveView} />
 

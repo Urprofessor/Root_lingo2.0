@@ -39,8 +39,8 @@ export function Logo({ size = 'md', showText = true, showIcon = true, className 
           >
             <ShinyText
               text="ROOT·LINGO"
-              color="#1d1d1f"
-              shineColor="#34C759"
+              color="#d2d2d7"
+              shineColor="#ffffff"
               speed={3}
               spread={120}
             />

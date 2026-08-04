@@ -1,8 +1,8 @@
 'use client';
 
-import { Home, BookOpen, FileText, UserCircle, Settings, ShieldCheck, LogOut, Languages, FileSpreadsheet } from 'lucide-react';
+import { UserCircle, ShieldCheck, LogOut } from 'lucide-react';
 import { Logo } from './Logo';
-import { cn } from '@/lib/utils/cn';
+import LineSidebar from '@/components/effects/LineSidebar';
 import type { ActiveView } from '@/types/view';
 import { useAuthStore } from '@/store/useAuthStore';
 
@@ -11,37 +11,48 @@ interface SidebarProps {
   onChange: (view: ActiveView) => void;
 }
 
-const NAV_ITEMS: { id: ActiveView; icon: React.ReactNode; label: string }[] = [
-  { id: 'workspace', icon: <Home size={18} />, label: '工作台' },
-  { id: 'tips', icon: <Languages size={18} />, label: 'Tips 本地化' },
-  { id: 'excel', icon: <FileSpreadsheet size={18} />, label: 'Excel 翻译' },
-  { id: 'glossary', icon: <BookOpen size={18} />, label: '术语库' },
-  { id: 'templates', icon: <FileText size={18} />, label: '提示词模板' },
-  { id: 'api-keys', icon: <UserCircle size={18} />, label: '账户' },
-  { id: 'settings', icon: <Settings size={18} />, label: '本地设置' },
+const NAV_ITEMS: { id: ActiveView; label: string }[] = [
+  { id: 'workspace', label: '工作台' },
+  { id: 'glossary', label: '术语库' },
+  { id: 'templates', label: '提示词模板' },
+  { id: 'api-keys', label: '账户' },
+  { id: 'settings', label: '本地设置' },
 ];
 
 export function Sidebar({ activeView, onChange }: SidebarProps) {
   const username = useAuthStore((s) => s.username);
   const logout = useAuthStore((s) => s.logout);
 
+  const activeIndex = NAV_ITEMS.findIndex((n) => n.id === activeView);
+
   return (
-    <aside className="flex w-[260px] shrink-0 flex-col border-r border-ink-200 bg-ink-50/60 px-5 py-6">
+    <aside className="flex w-[260px] shrink-0 flex-col border-r border-ink-200 bg-ink-50/60 px-5 py-6 backdrop-blur-apple">
       <div className="mb-9 px-2">
         <Logo size="md" showIcon={false} />
       </div>
 
-      <nav className="space-y-1.5">
-        {NAV_ITEMS.map((item) => (
-          <SidebarItem
-            key={item.id}
-            active={activeView === item.id}
-            icon={item.icon}
-            label={item.label}
-            onClick={() => onChange(item.id)}
-          />
-        ))}
-      </nav>
+      {/* key 随 activeView 变化,让高亮项与外部导航(Header 按钮)保持同步 */}
+      <LineSidebar
+        key={activeView}
+        items={NAV_ITEMS.map((n) => n.label)}
+        accentColor="#ffffff"
+        textColor="#8a8a90"
+        markerColor="#5a5a5e"
+        showIndex
+        showMarker
+        proximityRadius={110}
+        maxShift={16}
+        falloff="smooth"
+        markerLength={34}
+        markerGap={0}
+        tickScale={0.5}
+        scaleTick
+        itemGap={20}
+        fontSize={0.98}
+        smoothing={100}
+        defaultActive={activeIndex >= 0 ? activeIndex : 0}
+        onItemClick={(index) => onChange(NAV_ITEMS[index].id)}
+      />
 
       <div className="mt-auto space-y-3">
         <PrivacyCard />
@@ -68,40 +79,6 @@ export function Sidebar({ activeView, onChange }: SidebarProps) {
         </div>
       </div>
     </aside>
-  );
-}
-
-function SidebarItem({
-  icon,
-  label,
-  active = false,
-  onClick,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  active?: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={cn(
-        'group flex w-full items-center gap-3 rounded-2xl px-4 py-2.5 text-sm font-medium transition',
-        active
-          ? 'bg-white text-ink-900 shadow-apple-sm'
-          : 'text-ink-600 hover:bg-white/60 hover:text-ink-900'
-      )}
-    >
-      <span
-        className={cn(
-          'transition-colors',
-          active ? 'text-brand-500' : 'text-ink-500 group-hover:text-ink-700'
-        )}
-      >
-        {icon}
-      </span>
-      {label}
-    </button>
   );
 }
 
