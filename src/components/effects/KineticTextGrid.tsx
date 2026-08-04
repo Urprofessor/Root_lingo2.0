@@ -206,14 +206,15 @@ export default function KineticTextGrid(props: Props) {
                   );
                 }
 
-                // Grid cells cycle through the provided languages (spread
-                // deterministically so neighbours differ); falls back to `text`.
+                // Give each non-center cell the next language in order, so every
+                // provided language appears (the grid has 24 non-center cells).
+                const flatIndex = rowIndex * safeRepeatCount + wordIndex;
+                const centerFlat =
+                  centerRowIndex * safeRepeatCount + centerWordIndex;
+                const ordinal =
+                  flatIndex < centerFlat ? flatIndex : flatIndex - 1;
                 const cellText =
-                  texts.length > 0
-                    ? texts[
-                        (rowIndex * 7 + wordIndex * 3) % texts.length
-                      ]
-                    : text;
+                  texts.length > 0 ? texts[ordinal % texts.length] : text;
 
                 const denom = Math.max(1, safeRepeatCount - 1);
                 const sweepT = wipeLTR
