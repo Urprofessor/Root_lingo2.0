@@ -4,8 +4,6 @@ import { useState } from 'react';
 import { AuthGate } from '@/components/auth/AuthGate';
 import SideRays from '@/components/effects/SideRays';
 import { Sidebar } from '@/components/layout/Sidebar';
-import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
 import { InputPanel } from '@/components/input-panel/InputPanel';
 import { SettingsPanel } from '@/components/settings-panel/SettingsPanel';
 import { OutputPanel } from '@/components/output-panel/OutputPanel';
@@ -58,8 +56,6 @@ function AuthenticatedApp() {
         <Sidebar activeView={activeView} onChange={setActiveView} />
 
         <section className="flex min-w-0 flex-1 flex-col bg-white">
-          <Header onNavigate={setActiveView} />
-
           <div className="flex-1 overflow-hidden">
             {activeView === 'workspace' && <Workspace />}
             {activeView === 'tips' && <TipsLocalizationPage />}
@@ -73,8 +69,6 @@ function AuthenticatedApp() {
             {activeView === 'api-keys' && <AccountPage />}
             {activeView === 'settings' && <SettingsPage />}
           </div>
-
-          <Footer />
         </section>
       </div>
     </main>
