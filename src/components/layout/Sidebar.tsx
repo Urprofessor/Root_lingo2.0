@@ -44,6 +44,7 @@ export function Sidebar({ activeView, onChange }: SidebarProps) {
         scaleTick
         itemGap={20}
         fontSize={0.98}
+        maxScale={1.26}
         smoothing={100}
         defaultActive={activeIndex >= 0 ? activeIndex : 0}
         onItemClick={(index) => onChange(NAV_ITEMS[index].id)}
