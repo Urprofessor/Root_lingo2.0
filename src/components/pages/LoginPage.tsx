@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Loader2, Lock, User, AlertCircle, ShieldCheck } from 'lucide-react';
 import { Logo } from '@/components/layout/Logo';
 import SideRays from '@/components/effects/SideRays';
+import ShinyText from '@/components/effects/ShinyText';
 import { useAuthStore } from '@/store/useAuthStore';
 import { cn } from '@/lib/utils/cn';
 
@@ -64,8 +65,14 @@ export function LoginPage() {
       <div className="relative z-10 w-full max-w-[420px]">
         <div className="mb-8 flex flex-col items-center">
           <Logo size="lg" showText={false} />
-          <h1 className="mt-4 text-2xl font-semibold tracking-tight text-white">
-            ROOT<span className="text-white/40">·</span>LINGO
+          <h1 className="mt-4 text-2xl font-semibold tracking-tight">
+            <ShinyText
+              text="ROOT·LINGO"
+              color="#d2d2d7"
+              shineColor="#ffffff"
+              speed={3}
+              spread={120}
+            />
           </h1>
           <p className="mt-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/50">
             AI Translation Studio

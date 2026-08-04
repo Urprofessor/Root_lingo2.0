@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { cn } from '@/lib/utils/cn';
+import ShinyText from '@/components/effects/ShinyText';
 
 interface LogoProps {
   size?: 'sm' | 'md' | 'lg';
@@ -31,10 +32,16 @@ export function Logo({ size = 'md', showText = true, className }: LogoProps) {
       {showText && (
         <div className="flex flex-col leading-none">
           <span
-            className={cn('font-semibold tracking-tight text-ink-900', d.text)}
+            className={cn('font-semibold tracking-tight', d.text)}
             style={{ letterSpacing: '-0.02em' }}
           >
-            ROOT<span className="text-brand-500">·</span>LINGO
+            <ShinyText
+              text="ROOT·LINGO"
+              color="#1d1d1f"
+              shineColor="#34C759"
+              speed={3}
+              spread={120}
+            />
           </span>
           {size !== 'sm' && (
             <span className="mt-1 text-[10px] font-medium uppercase tracking-[0.18em] text-ink-500">
