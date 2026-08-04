@@ -8,7 +8,6 @@
   --max-shift: 30px;
   --item-gap: 20px;
   --font-size: 1.1rem;
-  --max-scale: 1;
   --smoothing: 100ms;
 
   position: relative;
@@ -51,9 +50,7 @@
   font-size: var(--font-size);
   line-height: 1.2;
   color: color-mix(in srgb, var(--accent-color) calc(var(--effect, 0) * 100%), var(--text-color));
-  transform-origin: left center;
-  transform: translateX(calc(var(--effect, 0) * var(--max-shift)))
-    scale(calc(1 + var(--effect, 0) * (var(--max-scale, 1) - 1)));
+  transform: translateX(calc(var(--effect, 0) * var(--max-shift)));
 }
 
 .line-sidebar__index {

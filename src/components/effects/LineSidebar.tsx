@@ -27,7 +27,6 @@ type LineSidebarProps = {
   scaleTick?: boolean;
   itemGap?: number;
   fontSize?: number;
-  maxScale?: number;
   smoothing?: number;
   defaultActive?: number | null;
   onItemClick?: (index: number, label: string) => void;
@@ -50,7 +49,6 @@ const LineSidebar = ({
   scaleTick = true,
   itemGap = 20,
   fontSize = 1.1,
-  maxScale = 1,
   smoothing = 100,
   defaultActive = null,
   onItemClick,
@@ -165,7 +163,6 @@ const LineSidebar = ({
     '--max-shift': `${maxShift}px`,
     '--item-gap': `${itemGap}px`,
     '--font-size': `${fontSize}rem`,
-    '--max-scale': maxScale,
     '--smoothing': `${smoothing}ms`,
   } as React.CSSProperties;
 

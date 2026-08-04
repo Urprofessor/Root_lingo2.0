@@ -1,7 +1,7 @@
 'use client';
 
 import { Logo } from './Logo';
-import LineSidebar from '@/components/effects/LineSidebar';
+import MagneticNav from '@/components/effects/MagneticNav';
 import type { ActiveView } from '@/types/view';
 
 interface SidebarProps {
@@ -26,27 +26,15 @@ export function Sidebar({ activeView, onChange }: SidebarProps) {
         <Logo size="md" showIcon={false} />
       </div>
 
-      {/* key 随 activeView 变化,让高亮项与外部导航保持同步 */}
-      <LineSidebar
-        key={activeView}
+      <MagneticNav
         items={NAV_ITEMS.map((n) => n.label)}
+        activeIndex={activeIndex >= 0 ? activeIndex : 0}
         accentColor="#ffffff"
         textColor="#8a8a90"
-        markerColor="#5a5a5e"
-        showIndex
-        showMarker
-        proximityRadius={110}
-        maxShift={16}
-        falloff="smooth"
-        markerLength={34}
-        markerGap={0}
-        tickScale={0.5}
-        scaleTick
-        itemGap={20}
-        fontSize={0.98}
-        maxScale={1.26}
-        smoothing={100}
-        defaultActive={activeIndex >= 0 ? activeIndex : 0}
+        hoverScale={1.42}
+        influence={96}
+        itemGap={22}
+        fontSize={1.02}
         onItemClick={(index) => onChange(NAV_ITEMS[index].id)}
       />
     </aside>
